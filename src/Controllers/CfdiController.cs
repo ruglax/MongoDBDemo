@@ -32,11 +32,11 @@ namespace MongoDBDemo.Controllers
         /// <summary>
         /// Realiza la afectación para aceptar rechazar las peticiones pendientes.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="uuid"></param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("{uuid}")]
         [Produces("application/json")]
-        public async Task<IActionResult> Get([FromQuery]string id)
+        public async Task<IActionResult> Get([FromQuery]string uuid)
         {
             if (!ModelState.IsValid)
             {
@@ -50,25 +50,22 @@ namespace MongoDBDemo.Controllers
                              + directorySeparator
                              + "CFDI.xml";
 
-            XmlTransform xmlTransform = new XmlTransform();
+            CfdiLoader cfdiLoader = new CfdiLoader();
             Repository repository = new Repository();
             using (StreamReader sourceReader = System.IO.File.OpenText(pathToFile))
             {
                 string rawXml = await sourceReader.ReadToEndAsync();
                 if (!string.IsNullOrWhiteSpace(rawXml))
                 {
-                    var bsdocument = xmlTransform.Transform(rawXml, out JObject json);
-                    await repository.InsertAsync(bsdocument);
-                    return Ok(json);
+                    var cfdiJson = Transform.TransformToJson(rawXml);
+                    BsonDocument document = cfdiLoader.LoadInfo(cfdiJson);
+                    await repository.InsertAsync(document);
+                    return Ok(cfdiJson);
                 }
 
             }
 
             return NotFound("No se encontró el archivo especificado");
         }
-
-
-
-
     }
 }
