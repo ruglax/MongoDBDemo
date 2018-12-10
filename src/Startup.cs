@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDBDemo.Document;
+using MongoDBDemo.Document.Catalog;
+using MongoDBDemo.Document.DB;
 
 namespace MongoDBDemo
 {
@@ -33,6 +36,13 @@ namespace MongoDBDemo
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddTransient<ILoaderInfo, CfdiLoader>();
+            services.AddTransient<ICatalogClient>(ctx =>
+            {
+                string connectionString = Configuration["ConnectionStrings:DBCatalogos"];
+                return new CatalogRepository(connectionString); 
+            });
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,6 +69,7 @@ namespace MongoDBDemo
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
         }
     }
 }

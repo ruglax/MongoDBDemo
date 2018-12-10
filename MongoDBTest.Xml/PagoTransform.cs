@@ -21,7 +21,7 @@ namespace MongoDBDemo.Document
         {
             _cfdiLoader.LoadInfo(cfdiObject);
 
-            return  BsonSerializer.Deserialize<BsonDocument>(cfdiObject.ToString());
+            return BsonSerializer.Deserialize<BsonDocument>(cfdiObject.ToString());
         }
     }
 }

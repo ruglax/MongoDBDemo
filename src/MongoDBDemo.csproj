@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MongoDBDemo.DataAccess\MongoDBDemo.DataAccess.csproj" />
+    <ProjectReference Include="..\MongoDBDemo.Document.DB\MongoDBDemo.Document.DB.csproj" />
     <ProjectReference Include="..\MongoDBTest.Xml\MongoDBDemo.Document.csproj" />
   </ItemGroup>
 

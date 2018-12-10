@@ -24,9 +24,12 @@ namespace MongoDBDemo.Controllers
     {
         private readonly IHostingEnvironment _env;
 
-        public CfdiController(IHostingEnvironment env)
+        private readonly ILoaderInfo _loaderInfo;
+
+        public CfdiController(IHostingEnvironment env, ILoaderInfo loaderInfo)
         {
             _env = env;
+            _loaderInfo = loaderInfo;
         }
 
         /// <summary>
@@ -50,7 +53,6 @@ namespace MongoDBDemo.Controllers
                              + directorySeparator
                              + "CFDI.xml";
 
-            CfdiLoader cfdiLoader = new CfdiLoader();
             Repository repository = new Repository();
             using (StreamReader sourceReader = System.IO.File.OpenText(pathToFile))
             {
@@ -58,7 +60,7 @@ namespace MongoDBDemo.Controllers
                 if (!string.IsNullOrWhiteSpace(rawXml))
                 {
                     var cfdiJson = Transform.TransformToJson(rawXml);
-                    BsonDocument document = cfdiLoader.LoadInfo(cfdiJson);
+                    BsonDocument document = _loaderInfo.LoadInfo(cfdiJson);
                     await repository.InsertAsync(document);
                     return Ok(cfdiJson);
                 }
